@@ -5,6 +5,7 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import UserNavbar from "../components/UserNavbar";
 import { useAuth } from "../context/AuthContext";
+import RepositoryCard from "../components/RepositoryCard";
 
 // Define the shape of the user object
 interface User {
@@ -58,33 +59,33 @@ const Dashboard: React.FC = () => {
     fetchUserData();
   }, [navigate]);
 
-  // useEffect(() => {
-  //   if (!user) return;
+  useEffect(() => {
+    if (!user) return;
 
-  //   const fetchRepos = async () => {
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //       if (!token) throw new Error("No token found");
+    const fetchRepos = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No token found");
 
-  //       const reposRes = await axios.get(
-  //         "http://localhost:5000/api/repos/my-repos",
-  //         {
-  //           headers: { Authorization: `Bearer ${token}` },
-  //         }
-  //       );
-  //       setRepos(reposRes.data);
-  //     } catch (error) {
-  //       console.error(
-  //         "Failed to fetch repositories:",
-  //         error instanceof Error ? error.message : "Unknown error"
-  //       );
-  //     } finally {
-  //       setRepoLoading(false);
-  //     }
-  //   };
+        const reposRes = await axios.get(
+          "http://localhost:5000/api/repos/my-repos",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setRepos(reposRes.data);
+      } catch (error) {
+        console.error(
+          "Failed to fetch repositories:",
+          error instanceof Error ? error.message : "Unknown error"
+        );
+      } finally {
+        setRepoLoading(false);
+      }
+    };
 
-  //   fetchRepos();
-  // }, [user]);
+    fetchRepos();
+  }, [user]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -140,7 +141,7 @@ const Dashboard: React.FC = () => {
             </motion.button>
           </div>
 
-          {/* <AnimatePresence>
+          <AnimatePresence>
             {repoLoading ? (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -177,7 +178,7 @@ const Dashboard: React.FC = () => {
                 ))}
               </div>
             )}
-          </AnimatePresence> */}
+          </AnimatePresence>
         </div>
       </main>
     </div>

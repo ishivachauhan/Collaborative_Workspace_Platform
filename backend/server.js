@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
+const repoRoutes = require("./routes/repoRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -20,6 +21,7 @@ mongoose
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/repos", repoRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;
