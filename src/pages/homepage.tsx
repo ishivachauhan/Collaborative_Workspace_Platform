@@ -1,9 +1,9 @@
-import React, { JSX, useEffect } from "react";
+import { JSX, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, Variants } from "framer-motion";
 import {
   FiArrowRight,
-  FiMessageSquare,
+  // FiMessageSquare,
   FiUsers,
   FiFile,
   FiCheckSquare,
@@ -15,7 +15,7 @@ import {
   FiTwitter,
   FiLinkedin,
 } from "react-icons/fi";
-import { FaRocket, FaRegSmileBeam, FaJira } from "react-icons/fa";
+import { FaRocket, FaJira } from "react-icons/fa";
 import { Link as ScrollLink } from "react-scroll";
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -39,10 +39,10 @@ const fadeIn: Variants = {
   visible: { opacity: 1, transition: { duration: 0.8 } },
 };
 
-const slideUp: Variants = {
-  hidden: { y: 50, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.6 } },
-};
+// const slideUp: Variants = {
+//   hidden: { y: 50, opacity: 0 },
+//   visible: { y: 0, opacity: 1, transition: { duration: 0.6 } },
+// };
 
 // Define features array
 const features: Feature[] = [

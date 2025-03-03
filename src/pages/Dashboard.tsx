@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import UserNavbar from "../components/UserNavbar";
-import { useAuth } from "../context/AuthContext";
+// import { useAuth } from "../context/AuthContext";
 import RepositoryCard from "../components/RepositoryCard";
 
 // Define the shape of the user object
@@ -18,9 +18,12 @@ interface User {
 interface Repository {
   _id: string;
   name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
+  visibility: "private" | "public";
+  owner: {
+    username: string;
+  };
+  collaborators: any[]; // Replace `any` with a specific type if needed
+  defaultBranch: string;
 }
 
 const Dashboard: React.FC = () => {

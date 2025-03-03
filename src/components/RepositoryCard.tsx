@@ -17,13 +17,18 @@ interface Repository {
 // Define the props for RepositoryCard
 interface RepositoryCardProps {
   repo: Repository;
+  onClick?: () => void;
 }
 
-const RepositoryCard: React.FC<RepositoryCardProps> = ({ repo }) => {
+const RepositoryCard: React.FC<RepositoryCardProps> = ({ repo, onClick }) => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/repo/${repo._id}`); // Navigate to repository view page
+    if (onClick) {
+      onClick(); // ✅ Call the passed onClick function if provided
+    } else {
+      navigate(`/repo/${repo._id}`); // Default navigation
+    }
   };
 
   return (

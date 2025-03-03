@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -11,13 +11,13 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import { AuthProvider } from "./context/AuthContext";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./pages/Dashboard";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import CreateRepo from "./pages/CreateRepo";
 import RepoNavbar from "./components/RepoNavbar"; // Import the new RepoNavbar
 
 function App() {
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
 
   // Create a wrapper component to conditionally render the navbar
   const AppContent: React.FC = () => {

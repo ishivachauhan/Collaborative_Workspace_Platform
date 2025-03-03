@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { div } from "framer-motion/client";
-import UserNavbar from "../components/UserNavbar";
-import RepoNavbar from "../components/RepoNavbar";
+// import { div } from "framer-motion/client";
+// import UserNavbar from "../components/UserNavbar";
+// import RepoNavbar from "../components/RepoNavbar";
 
 const CreateRepo: React.FC = () => {
   const [name, setName] = useState<string>("");
