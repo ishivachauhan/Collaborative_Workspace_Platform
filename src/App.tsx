@@ -25,7 +25,7 @@ function App() {
     const location = useLocation();
 
     // Define routes where RepoNavbar should be displayed
-    const repoRoutes = ["/create-repo"]; // Add more routes if needed
+    const repoRoutes = ["/create-repo ||/repo/:id "]; // Add more routes if needed
 
     // Check if the current route is a repository-related route
     const isRepoRoute = repoRoutes.includes(location.pathname);

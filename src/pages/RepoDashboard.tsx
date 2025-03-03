@@ -87,7 +87,7 @@ const RepoDashboard: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Repository deleted successfully!");
-      navigate("/"); // ✅ Redirect to dashboard after deletion
+      navigate("-1"); // ✅ Redirect to dashboard after deletion
     } catch (error) {
       console.error("Failed to delete repository:", error);
       alert("Error deleting repository");
@@ -103,7 +103,7 @@ const RepoDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen bg-gray-900 text-white p-8 mt-[50px]">
       <h1 className="text-3xl font-bold">{repo.name}</h1>
       <p className="text-gray-400">{repo.description}</p>
       <p className="text-gray-500">Owner: {repo.owner.username}</p>
