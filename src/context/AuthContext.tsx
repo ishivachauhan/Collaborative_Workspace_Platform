@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://collaborative-workspace-platform-backend.onrender.com",
         {
           email,
           password,
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signup = async (username: string, email: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        "https://collaborative-workspace-platform-backend.onrender.com",
         {
           username,
           email,
