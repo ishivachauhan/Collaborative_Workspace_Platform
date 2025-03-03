@@ -1,24 +1,25 @@
 // routes/repoRoutes.js
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const Repository = require("../models/repository");
+const File = require("../models/file"); // ✅ Ensure File model is imported
 const authMiddleware = require("../middleware/auth");
 
-// Create a new repository
+// ✅ Create a New Repository
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const { name, description, visibility } = req.body;
 
-    // Create the repository
+    // Create repository with the authenticated user as owner
     const repository = new Repository({
       name,
       description,
       visibility,
-      owner: req.user.id, // Attach the owner (user ID from auth middleware)
+      owner: req.user.id,
     });
 
     await repository.save();
-
     res.status(201).json(repository);
   } catch (error) {
     res
@@ -27,10 +28,11 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Get User's Repositories
 router.get("/my-repos", authMiddleware, async (req, res) => {
   try {
     const repositories = await Repository.find({ owner: req.user.id })
-      .populate("owner", "username") // Populate the owner's username
+      .populate("owner", "username")
       .exec();
     res.status(200).json(repositories);
   } catch (error) {
@@ -40,8 +42,13 @@ router.get("/my-repos", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Get a Repository by ID
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid repository ID" });
+    }
+
     const repo = await Repository.findById(req.params.id).populate(
       "owner",
       "username email"
@@ -56,15 +63,23 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Push Code (Save File)
 router.post("/:id/push", authMiddleware, async (req, res) => {
   try {
-    const { filename, content } = req.body; // Get filename & content from request
+    const { filename, content } = req.body;
+
     if (!filename || !content) {
       return res.status(400).json({ message: "Filename and content required" });
     }
 
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid repository ID" });
+    }
+
     const repo = await Repository.findById(req.params.id);
-    if (!repo) return res.status(404).json({ message: "Repository not found" });
+    if (!repo) {
+      return res.status(404).json({ message: "Repository not found" });
+    }
 
     // ✅ Save file to database
     const newFile = new File({
@@ -73,8 +88,8 @@ router.post("/:id/push", authMiddleware, async (req, res) => {
       repository: req.params.id,
       createdAt: new Date(),
     });
-    await newFile.save();
 
+    await newFile.save();
     res
       .status(201)
       .json({ message: "File pushed successfully", file: newFile });
@@ -84,9 +99,13 @@ router.post("/:id/push", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Fetch all pushed files for a repository
+// ✅ Fetch All Pushed Files for a Repository
 router.get("/:id/files", authMiddleware, async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid repository ID" });
+    }
+
     const files = await File.find({ repository: req.params.id });
     res.status(200).json(files);
   } catch (error) {
@@ -98,10 +117,15 @@ router.get("/:id/files", authMiddleware, async (req, res) => {
 // ✅ Pull Latest Code (Dummy Function)
 router.post("/:id/pull", authMiddleware, async (req, res) => {
   try {
-    const repo = await Repository.findById(req.params.id);
-    if (!repo) return res.status(404).json({ message: "Repository not found" });
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid repository ID" });
+    }
 
-    // Logic to pull latest code (replace with real implementation)
+    const repo = await Repository.findById(req.params.id);
+    if (!repo) {
+      return res.status(404).json({ message: "Repository not found" });
+    }
+
     console.log(`Pulling latest code for repo ${repo.name}...`);
     res.status(200).json({ message: "Latest code pulled successfully" });
   } catch (error) {
@@ -113,8 +137,14 @@ router.post("/:id/pull", authMiddleware, async (req, res) => {
 // ✅ Delete Repository
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid repository ID" });
+    }
+
     const repo = await Repository.findByIdAndDelete(req.params.id);
-    if (!repo) return res.status(404).json({ message: "Repository not found" });
+    if (!repo) {
+      return res.status(404).json({ message: "Repository not found" });
+    }
 
     res.status(200).json({ message: "Repository deleted successfully" });
   } catch (error) {
