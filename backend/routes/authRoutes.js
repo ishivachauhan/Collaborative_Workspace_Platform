@@ -11,5 +11,8 @@ router.post("/register", authController.register);
 router.post("/login", authController.login);
 
 router.get("/user", authMiddleware, authController.dashboard_user);
+router.get("/user", authMiddleware, (req, res) => {
+  res.json({ user: req.user });
+});
 
 module.exports = router;

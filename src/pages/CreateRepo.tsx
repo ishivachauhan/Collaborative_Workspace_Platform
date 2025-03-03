@@ -11,6 +11,8 @@ const CreateRepo: React.FC = () => {
   const [visibility, setVisibility] = useState<"private" | "public">("private");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+  const API_URL =
+    "https://collaborative-workspace-platform-backend.onrender.com/api";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ const CreateRepo: React.FC = () => {
       if (!token) throw new Error("No token found");
 
       const response = await axios.post(
-        "https://collaborative-workspace-platform-backend.onrender.com",
+        `${API_URL}/repos`,
         { name, description, visibility },
         { headers: { Authorization: `Bearer ${token}` } }
       );

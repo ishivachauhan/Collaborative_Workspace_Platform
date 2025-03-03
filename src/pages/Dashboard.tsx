@@ -33,6 +33,8 @@ const Dashboard: React.FC = () => {
   const [repoLoading, setRepoLoading] = useState<boolean>(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const navigate = useNavigate();
+  const API_URL =
+    "https://collaborative-workspace-platform-backend.onrender.com/api";
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,12 +42,10 @@ const Dashboard: React.FC = () => {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
 
-        const response = await axios.get(
-          "https://collaborative-workspace-platform-backend.onrender.com",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${API_URL}/auth/user`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         setUser(response.data.user);
       } catch (error) {
         console.error(

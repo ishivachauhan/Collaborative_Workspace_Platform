@@ -24,18 +24,18 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const API_URL =
+  "https://collaborative-workspace-platform-backend.onrender.com/api";
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post(
-        "https://collaborative-workspace-platform-backend.onrender.com",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
       localStorage.setItem("token", response.data.token);
       setUser(response.data.user); // Assuming the backend returns a `user` object
     } catch (error) {
@@ -45,14 +45,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signup = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post(
-        "https://collaborative-workspace-platform-backend.onrender.com",
-        {
-          username,
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${API_URL}/auth/register`, {
+        username,
+        email,
+        password,
+      });
       localStorage.setItem("token", response.data.token);
       setUser(response.data.user); // Assuming the backend returns a `user` object
     } catch (error) {
