@@ -119,6 +119,27 @@ const RepoDashboard: React.FC = () => {
     }
   };
 
+  // ✅ Delete File from Repo
+  const handleDeleteFile = async (fileId: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this file?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_URL}/repos/${id}/files/${fileId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("File deleted successfully!");
+      fetchFiles(); // ✅ Refresh file list after deletion
+    } catch (error) {
+      console.error("Failed to delete file:", error);
+      alert("Error deleting file");
+    }
+  };
+
   // ✅ Pull Latest Code
   const handlePull = async () => {
     try {
@@ -140,7 +161,7 @@ const RepoDashboard: React.FC = () => {
   };
 
   // ✅ Delete Repository
-  const handleDelete = async () => {
+  const handleDeleteRepo = async () => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this repository?"
     );
@@ -167,8 +188,6 @@ const RepoDashboard: React.FC = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-900 to-slate-800 text-white flex flex-col items-center p-8">
       <h1 className="text-3xl font-bold">{repo?.name}</h1>
-      <p className="text-gray-400">{repo?.description}</p>
-      <p className="text-gray-500">Owner: {repo?.owner.username}</p>
 
       {/* ✅ File Upload Section */}
       <input
@@ -190,53 +209,29 @@ const RepoDashboard: React.FC = () => {
         Push Files
       </button>
 
-      {/* ✅ Buttons */}
-      <div className="mt-6 flex space-x-4">
-        <button
-          onClick={handlePull}
-          className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded"
-        >
-          Pull Code
-        </button>
-        <button
-          onClick={handleDelete}
-          className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
-        >
-          Delete Repository
-        </button>
-      </div>
-
-      {/* ✅ File List */}
+      {/* ✅ File List with Delete Button */}
       <div className="mt-6 w-full max-w-3xl">
         <h2 className="text-xl font-bold mb-2">Repository Files</h2>
-        {files.length === 0 ? (
-          <p className="text-gray-400">No files found.</p>
-        ) : (
-          files.map((file) => (
-            <div
-              key={file._id}
-              className="bg-gray-700 p-3 rounded mb-2 cursor-pointer"
+        {files.map((file) => (
+          <div
+            key={file._id}
+            className="bg-gray-700 p-3 rounded mb-2 flex justify-between"
+          >
+            <span
+              className="cursor-pointer"
               onClick={() => setSelectedFile(file)}
             >
               {file.filename}
-            </div>
-          ))
-        )}
+            </span>
+            <button
+              onClick={() => handleDeleteFile(file._id)}
+              className="text-red-400"
+            >
+              ❌ Delete
+            </button>
+          </div>
+        ))}
       </div>
-
-      {/* ✅ Monaco Editor */}
-      {selectedFile && (
-        <div className="mt-6 w-full max-w-3xl bg-gray-800 p-4 rounded">
-          <h2 className="text-xl font-bold">{selectedFile.filename}</h2>
-          <Editor
-            height="400px"
-            defaultLanguage="javascript"
-            value={selectedFile.content}
-            theme="vs-dark"
-            options={{ readOnly: true }}
-          />
-        </div>
-      )}
     </div>
   );
 };
