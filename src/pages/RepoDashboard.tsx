@@ -87,7 +87,7 @@ const RepoDashboard: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Repository deleted successfully!");
-      navigate("-1"); // ✅ Redirect to dashboard after deletion
+      navigate("/Dashboard"); // ✅ Redirect to dashboard after deletion
     } catch (error) {
       console.error("Failed to delete repository:", error);
       alert("Error deleting repository");
