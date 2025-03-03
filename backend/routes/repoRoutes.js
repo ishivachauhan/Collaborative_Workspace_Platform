@@ -58,14 +58,39 @@ router.get("/:id", authMiddleware, async (req, res) => {
 
 router.post("/:id/push", authMiddleware, async (req, res) => {
   try {
+    const { filename, content } = req.body; // Get filename & content from request
+    if (!filename || !content) {
+      return res.status(400).json({ message: "Filename and content required" });
+    }
+
     const repo = await Repository.findById(req.params.id);
     if (!repo) return res.status(404).json({ message: "Repository not found" });
 
-    // Logic to push code (replace with real implementation)
-    console.log(`Pushing code to repo ${repo.name}...`);
-    res.status(200).json({ message: "Code pushed successfully" });
+    // ✅ Save file to database
+    const newFile = new File({
+      filename,
+      content,
+      repository: req.params.id,
+      createdAt: new Date(),
+    });
+    await newFile.save();
+
+    res
+      .status(201)
+      .json({ message: "File pushed successfully", file: newFile });
   } catch (error) {
-    console.error("Error pushing code:", error);
+    console.error("Error pushing file:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Fetch all pushed files for a repository
+router.get("/:id/files", authMiddleware, async (req, res) => {
+  try {
+    const files = await File.find({ repository: req.params.id });
+    res.status(200).json(files);
+  } catch (error) {
+    console.error("Error fetching files:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
