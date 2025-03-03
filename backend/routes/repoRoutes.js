@@ -29,7 +29,9 @@ router.post("/", authMiddleware, async (req, res) => {
 
 router.get("/my-repos", authMiddleware, async (req, res) => {
   try {
-    const repositories = await Repository.find({ owner: req.user.id });
+    const repositories = await Repository.find({ owner: req.user.id })
+      .populate("owner", "username") // Populate the owner's username
+      .exec();
     res.status(200).json(repositories);
   } catch (error) {
     res
