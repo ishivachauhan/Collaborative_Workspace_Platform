@@ -71,7 +71,7 @@ const Dashboard: React.FC = () => {
         if (!token) throw new Error("No token found");
 
         const reposRes = await axios.get(
-          "https://collaborative-workspace-platform-backend.onrender.com",
+          "https://collaborative-workspace-platform-backend.onrender.com/api",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
