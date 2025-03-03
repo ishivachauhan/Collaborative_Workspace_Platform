@@ -19,7 +19,7 @@ const CreateRepo: React.FC = () => {
       if (!token) throw new Error("No token found");
 
       const response = await axios.post(
-        "http://localhost:5000/api/repos",
+        "https://collaborative-workspace-platform-backend.onrender.com",
         { name, description, visibility },
         { headers: { Authorization: `Bearer ${token}` } }
       );

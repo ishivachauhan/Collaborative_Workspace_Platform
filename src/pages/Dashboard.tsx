@@ -41,7 +41,7 @@ const Dashboard: React.FC = () => {
         if (!token) throw new Error("No token found");
 
         const response = await axios.get(
-          "http://localhost:5000/api/auth/user",
+          "https://collaborative-workspace-platform-backend.onrender.com",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
