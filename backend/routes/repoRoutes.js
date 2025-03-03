@@ -153,4 +153,29 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Delete a File from Repository
+router.delete("/:repoId/files/:fileId", authMiddleware, async (req, res) => {
+  try {
+    const { repoId, fileId } = req.params;
+
+    // Validate IDs
+    if (
+      !mongoose.Types.ObjectId.isValid(repoId) ||
+      !mongoose.Types.ObjectId.isValid(fileId)
+    ) {
+      return res.status(400).json({ message: "Invalid repository or file ID" });
+    }
+
+    const file = await File.findByIdAndDelete(fileId);
+    if (!file) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    res.status(200).json({ message: "File deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

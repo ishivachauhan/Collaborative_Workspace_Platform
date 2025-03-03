@@ -1,34 +1,15 @@
-// In AuthContext
-  // const API_URL =
-//   "https://collaborative-workspace-platform-backend.onrender.com/api";
+
+  const API_URL = "https://collaborative-workspace-platform-backend.onrender.com/api"; // Replace this with the below API_URL
+
 
 const API_URL = "http://localhost:5000/api"; // for local testing
 
+DO THE ABOVE IN ALL THE BELOW FILES
 
-
-
+// In AuthContext
 // In CreateRepo
+// In Dashboard
+// In RepoDashboard
+   
 
-  // const API_URL =
-  //   "https://collaborative-workspace-platform-backend.onrender.com/api";
-
-  const API_URL = "http://localhost:5000/api"; // for local testing
-
-
-
-  // In Dashboard
-   // const API_URL =
-  //   "https://collaborative-workspace-platform-backend.onrender.com/api";
-
-  const API_URL = "http://localhost:5000/api"; // for local testing
-
-
-
-  // In RepoDashboard
-   // const API_URL =
-  //   "https://collaborative-workspace-platform-backend.onrender.com/api";
-
-  const API_URL = "http://localhost:5000/api"; // for local testing
-
-
-  
+  // caf8198170e2a37efb2f741e4f4744f3 // gittea API tokken

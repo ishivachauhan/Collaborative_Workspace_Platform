@@ -26,10 +26,10 @@ const RepoDashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [uploadedFiles, setUploadedFiles] = useState<RepoFile[]>([]);
 
+  // const API_URL = "http://localhost:5000/api"; // Update to your backend API URL
+
   const API_URL =
     "https://collaborative-workspace-platform-backend.onrender.com/api";
-
-  // const API_URL = "http://localhost:5000/api"; // for local testing
 
   useEffect(() => {
     fetchRepoDetails();
@@ -121,6 +121,27 @@ const RepoDashboard: React.FC = () => {
     }
   };
 
+  // ✅ Delete File from Repo
+  const handleDeleteFile = async (fileId: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this file?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_URL}/repos/${id}/files/${fileId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("File deleted successfully!");
+      fetchFiles(); // ✅ Refresh file list after deletion
+    } catch (error) {
+      console.error("Failed to delete file:", error);
+      alert("Error deleting file");
+    }
+  };
+
   // ✅ Pull Latest Code
   const handlePull = async () => {
     try {
@@ -142,7 +163,7 @@ const RepoDashboard: React.FC = () => {
   };
 
   // ✅ Delete Repository
-  const handleDelete = async () => {
+  const handleDeleteRepo = async () => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this repository?"
     );
@@ -192,38 +213,28 @@ const RepoDashboard: React.FC = () => {
         Push Files
       </button>
 
-      {/* ✅ Buttons */}
-      <div className="mt-6 flex space-x-4">
-        <button
-          onClick={handlePull}
-          className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded"
-        >
-          Pull Code
-        </button>
-        <button
-          onClick={handleDelete}
-          className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
-        >
-          Delete Repository
-        </button>
-      </div>
-
-      {/* ✅ File List */}
+      {/* ✅ File List with Delete Button */}
       <div className="mt-6 w-full max-w-3xl">
         <h2 className="text-xl font-bold mb-2">Repository Files</h2>
-        {files.length === 0 ? (
-          <p className="text-gray-400">No files found.</p>
-        ) : (
-          files.map((file) => (
-            <div
-              key={file._id}
-              className="bg-gray-700 p-3 rounded mb-2 cursor-pointer"
+        {files.map((file) => (
+          <div
+            key={file._id}
+            className="bg-gray-700 p-3 rounded mb-2 flex justify-between"
+          >
+            <span
+              className="cursor-pointer"
               onClick={() => setSelectedFile(file)}
             >
               {file.filename}
-            </div>
-          ))
-        )}
+            </span>
+            <button
+              onClick={() => handleDeleteFile(file._id)}
+              className="text-white px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
+            >
+              ❌ Delete File
+            </button>
+          </div>
+        ))}
       </div>
 
       {/* ✅ Monaco Editor */}
@@ -239,6 +250,22 @@ const RepoDashboard: React.FC = () => {
           />
         </div>
       )}
+
+      {/* ✅ Pull & Delete Repository Buttons */}
+      <div className="mt-6 flex space-x-4">
+        <button
+          onClick={handlePull}
+          className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded"
+        >
+          Pull Code
+        </button>
+        <button
+          onClick={handleDeleteRepo}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
+        >
+          Delete Repository
+        </button>
+      </div>
     </div>
   );
 };
