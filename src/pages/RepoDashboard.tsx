@@ -21,10 +21,9 @@ const RepoDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [repo, setRepo] = useState<Repository | null>(null);
   const [files, setFiles] = useState<File[]>([]);
-  const [newFilename, setNewFilename] = useState("");
-  const [newContent, setNewContent] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const API_URL =
     "https://collaborative-workspace-platform-backend.onrender.com/api";
@@ -65,10 +64,26 @@ const RepoDashboard: React.FC = () => {
     }
   };
 
-  // ✅ Push New File
+  // ✅ Handle File Selection
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setUploadedFile({
+          _id: "",
+          filename: file.name,
+          content: e.target?.result as string,
+        });
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  // ✅ Push New File to Repo
   const handlePush = async () => {
-    if (!newFilename || !newContent) {
-      alert("Please enter a filename and content.");
+    if (!uploadedFile) {
+      alert("Please select a file to upload.");
       return;
     }
 
@@ -76,14 +91,13 @@ const RepoDashboard: React.FC = () => {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/repos/${id}/push`,
-        { filename: newFilename, content: newContent },
+        { filename: uploadedFile.filename, content: uploadedFile.content },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       alert("File pushed successfully!");
       setFiles([...files, response.data.file]);
-      setNewFilename("");
-      setNewContent("");
+      setUploadedFile(null);
     } catch (error) {
       console.error("Failed to push file:", error);
       alert("Error pushing file");
@@ -141,32 +155,60 @@ const RepoDashboard: React.FC = () => {
       <p className="text-gray-400">{repo?.description}</p>
       <p className="text-gray-500">Owner: {repo?.owner.username}</p>
 
-      {/* ✅ Push Code Section */}
-      <input
-        type="text"
-        placeholder="Filename"
-        value={newFilename}
-        onChange={(e) => setNewFilename(e.target.value)}
-      />
-      <textarea
-        placeholder="File content"
-        value={newContent}
-        onChange={(e) => setNewContent(e.target.value)}
-      />
-      <button onClick={handlePush}>Push Code</button>
+      {/* ✅ File Upload Section */}
+      <input type="file" onChange={handleFileChange} className="mt-4" />
+      {uploadedFile && (
+        <p className="text-green-400">File Ready: {uploadedFile.filename}</p>
+      )}
+
+      <button
+        onClick={handlePush}
+        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded mt-2"
+      >
+        Push File
+      </button>
 
       {/* ✅ Buttons */}
-      <button onClick={handlePull}>Pull Code</button>
-      <button onClick={handleDelete}>Delete Repository</button>
+      <div className="mt-6 flex space-x-4">
+        <button
+          onClick={handlePull}
+          className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded"
+        >
+          Pull Code
+        </button>
+        <button
+          onClick={handleDelete}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
+        >
+          Delete Repository
+        </button>
+      </div>
 
       {/* ✅ File List */}
-      {files.map((file) => (
-        <div key={file._id} onClick={() => setSelectedFile(file)}>
-          {file.filename}
-        </div>
-      ))}
+      <div className="mt-6 w-full max-w-3xl">
+        <h2 className="text-xl font-bold mb-2">Repository Files</h2>
+        {files.length === 0 ? (
+          <p className="text-gray-400">No files found.</p>
+        ) : (
+          files.map((file) => (
+            <div
+              key={file._id}
+              className="bg-gray-700 p-3 rounded mb-2 cursor-pointer"
+              onClick={() => setSelectedFile(file)}
+            >
+              {file.filename}
+            </div>
+          ))
+        )}
+      </div>
 
-      {selectedFile && <pre>{selectedFile.content}</pre>}
+      {/* ✅ File Viewer */}
+      {selectedFile && (
+        <div className="mt-6 w-full max-w-3xl bg-gray-800 p-4 rounded">
+          <h2 className="text-xl font-bold">{selectedFile.filename}</h2>
+          <pre className="bg-gray-900 p-3 rounded">{selectedFile.content}</pre>
+        </div>
+      )}
     </div>
   );
 };
