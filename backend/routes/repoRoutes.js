@@ -56,4 +56,46 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/:id/push", authMiddleware, async (req, res) => {
+  try {
+    const repo = await Repository.findById(req.params.id);
+    if (!repo) return res.status(404).json({ message: "Repository not found" });
+
+    // Logic to push code (replace with real implementation)
+    console.log(`Pushing code to repo ${repo.name}...`);
+    res.status(200).json({ message: "Code pushed successfully" });
+  } catch (error) {
+    console.error("Error pushing code:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Pull Latest Code (Dummy Function)
+router.post("/:id/pull", authMiddleware, async (req, res) => {
+  try {
+    const repo = await Repository.findById(req.params.id);
+    if (!repo) return res.status(404).json({ message: "Repository not found" });
+
+    // Logic to pull latest code (replace with real implementation)
+    console.log(`Pulling latest code for repo ${repo.name}...`);
+    res.status(200).json({ message: "Latest code pulled successfully" });
+  } catch (error) {
+    console.error("Error pulling code:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Delete Repository
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const repo = await Repository.findByIdAndDelete(req.params.id);
+    if (!repo) return res.status(404).json({ message: "Repository not found" });
+
+    res.status(200).json({ message: "Repository deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting repository:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
