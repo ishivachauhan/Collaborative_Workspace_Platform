@@ -71,7 +71,7 @@ const Dashboard: React.FC = () => {
         if (!token) throw new Error("No token found");
 
         const reposRes = await axios.get(
-          "http://localhost:5000/api/repos/my-repos",
+          "https://api.render.com/deploy/srv-cv2ogvrqf0us73fvrb70?key=JtCrDHk4hMU",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
