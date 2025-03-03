@@ -103,7 +103,10 @@ const RepoDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8 mt-[50px]">
+    <div
+      className="min-h-screen w-full bg-gradient-to-b from-slate-900 to-slate-800 text-white
+                     w-screen mx-[-20px] mb-[-20px] px-[20px] pb-[20px] overflow-x-hidden"
+    >
       <h1 className="text-3xl font-bold">{repo.name}</h1>
       <p className="text-gray-400">{repo.description}</p>
       <p className="text-gray-500">Owner: {repo.owner.username}</p>
