@@ -9,8 +9,13 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ["https://your-frontend.onrender.com", "http://localhost:3000"],
-    credentials: true,
+    origin: [
+      "https://collaborative-workspace-platform-3.onrender.com",
+      "http://localhost:3000",
+    ], // ✅ Allow frontend URLs
+    methods: "GET,POST,PUT,DELETE,OPTIONS", // ✅ Allow necessary methods
+    allowedHeaders: ["Content-Type", "Authorization"], // ✅ Allow headers
+    credentials: true, // ✅ Allow cookies & authentication headers
   })
 );
 app.use(express.json());
