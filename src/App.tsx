@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import CreateRepo from "./pages/CreateRepo";
 import RepoNavbar from "./components/RepoNavbar"; // Import the new RepoNavbar
+import RepoDashboard from "./pages/RepoDashboard";
 
 function App() {
   // const [count, setCount] = useState(0);
@@ -41,6 +42,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/create-repo" element={<CreateRepo />} />
+          <Route path="/repo/:id" element={<RepoDashboard />} />
         </Routes>
       </>
     );
