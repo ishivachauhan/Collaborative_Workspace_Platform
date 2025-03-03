@@ -40,4 +40,20 @@ router.get("/my-repos", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/:id", authMiddleware, async (req, res) => {
+  try {
+    const repo = await Repository.findById(req.params.id).populate(
+      "owner",
+      "username email"
+    );
+    if (!repo) {
+      return res.status(404).json({ message: "Repository not found" });
+    }
+    res.json(repo);
+  } catch (error) {
+    console.error("Error fetching repository:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
