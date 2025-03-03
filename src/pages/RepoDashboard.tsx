@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Editor } from "@monaco-editor/react";
 
-interface File {
+interface RepoFile {
   _id: string;
   filename: string;
   content: string;
@@ -20,10 +21,10 @@ const RepoDashboard: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [repo, setRepo] = useState<Repository | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<RepoFile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<RepoFile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<RepoFile[]>([]);
 
   const API_URL =
     "https://collaborative-workspace-platform-backend.onrender.com/api";
@@ -64,43 +65,57 @@ const RepoDashboard: React.FC = () => {
     }
   };
 
-  // ✅ Handle File Selection
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
+  // ✅ Read File Content
+  const readFileContent = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setUploadedFile({
-          _id: "",
-          filename: file.name,
-          content: e.target?.result as string,
-        });
-      };
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.onerror = reject;
       reader.readAsText(file);
-    }
+    });
   };
 
-  // ✅ Push New File to Repo
+  // ✅ Handle Multiple File Selection
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const selectedFiles = event.target.files;
+    if (!selectedFiles) return;
+
+    const fileArray: RepoFile[] = [];
+    for (const file of Array.from(selectedFiles)) {
+      const content = await readFileContent(file);
+      fileArray.push({ _id: "", filename: file.name, content });
+    }
+
+    setUploadedFiles(fileArray);
+  };
+
+  // ✅ Push Multiple Files to Repo
   const handlePush = async () => {
-    if (!uploadedFile) {
-      alert("Please select a file to upload.");
+    if (uploadedFiles.length === 0) {
+      alert("Please select files to upload.");
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${API_URL}/repos/${id}/push`,
-        { filename: uploadedFile.filename, content: uploadedFile.content },
-        { headers: { Authorization: `Bearer ${token}` } }
+      await Promise.all(
+        uploadedFiles.map(async (file) => {
+          await axios.post(
+            `${API_URL}/repos/${id}/push`,
+            { filename: file.filename, content: file.content },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        })
       );
 
-      alert("File pushed successfully!");
-      setFiles([...files, response.data.file]);
-      setUploadedFile(null);
+      alert("Files pushed successfully!");
+      fetchFiles(); // ✅ Refresh file list after upload
+      setUploadedFiles([]);
     } catch (error) {
-      console.error("Failed to push file:", error);
-      alert("Error pushing file");
+      console.error("Failed to push files:", error);
+      alert("Error pushing files");
     }
   };
 
@@ -156,16 +171,23 @@ const RepoDashboard: React.FC = () => {
       <p className="text-gray-500">Owner: {repo?.owner.username}</p>
 
       {/* ✅ File Upload Section */}
-      <input type="file" onChange={handleFileChange} className="mt-4" />
-      {uploadedFile && (
-        <p className="text-green-400">File Ready: {uploadedFile.filename}</p>
+      <input
+        type="file"
+        multiple
+        onChange={handleFileChange}
+        className="mt-4"
+      />
+      {uploadedFiles.length > 0 && (
+        <p className="text-green-400">
+          {uploadedFiles.length} files ready to upload
+        </p>
       )}
 
       <button
         onClick={handlePush}
         className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded mt-2"
       >
-        Push File
+        Push Files
       </button>
 
       {/* ✅ Buttons */}
@@ -202,11 +224,17 @@ const RepoDashboard: React.FC = () => {
         )}
       </div>
 
-      {/* ✅ File Viewer */}
+      {/* ✅ Monaco Editor */}
       {selectedFile && (
         <div className="mt-6 w-full max-w-3xl bg-gray-800 p-4 rounded">
           <h2 className="text-xl font-bold">{selectedFile.filename}</h2>
-          <pre className="bg-gray-900 p-3 rounded">{selectedFile.content}</pre>
+          <Editor
+            height="400px"
+            defaultLanguage="javascript"
+            value={selectedFile.content}
+            theme="vs-dark"
+            options={{ readOnly: true }}
+          />
         </div>
       )}
     </div>
