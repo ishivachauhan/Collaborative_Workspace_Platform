@@ -14,6 +14,8 @@ const CreateRepo: React.FC = () => {
   const API_URL =
     "https://collaborative-workspace-platform-backend.onrender.com/api";
 
+  // const API_URL = "http://localhost:5000/api"; // for local testing
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {

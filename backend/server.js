@@ -11,7 +11,7 @@ app.use(
   cors({
     origin: [
       "https://collaborative-workspace-platform-3.onrender.com",
-      "http://localhost:3000",
+      "http://localhost:5173",
     ], // ✅ Allow frontend URLs
     methods: "GET,POST,PUT,DELETE,OPTIONS", // ✅ Allow necessary methods
     allowedHeaders: ["Content-Type", "Authorization"], // ✅ Allow headers

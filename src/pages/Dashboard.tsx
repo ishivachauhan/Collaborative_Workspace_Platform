@@ -36,6 +36,8 @@ const Dashboard: React.FC = () => {
   const API_URL =
     "https://collaborative-workspace-platform-backend.onrender.com/api";
 
+  // const API_URL = "http://localhost:5000/api"; // for local testing
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
